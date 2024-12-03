@@ -10,6 +10,7 @@
   </div>
 
   <Container />
+  <Container />
   <div class="sample-box"></div>
 
   <div class="footer">
