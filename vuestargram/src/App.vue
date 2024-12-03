@@ -9,7 +9,7 @@
     <img src="./assets/logo.png" class="logo" />
   </div>
 
-  <Container :posts="posts" />
+  <Container :posts="posts" :step="step"/>
   <div class="more">
     <a class="more-button" @click="more">more</a>
   </div>
@@ -35,6 +35,7 @@ export default {
     return {
       posts: posts,
       numClicked: 0,
+      step : 1,
     };
   },
   methods: {
