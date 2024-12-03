@@ -9,10 +9,10 @@
     <img src="./assets/logo.png" class="logo" />
   </div>
 
-  <Container />
-  <Container />
-  <div class="sample-box"></div>
-
+  <Container :posts="posts" />
+  <div class="more">
+    <a class="more-button" @click="more">more</a>
+  </div>
   <div class="footer">
     <ul class="footer-button-plus">
       <input type="file" id="file" class="inputfile" />
@@ -22,12 +22,46 @@
 </template>
 
 <script>
-import Container from './components/Container.vue';
+import Container from "./components/Container.vue";
+import posts from "./assets/posts.js";
+import axios from "axios";
 
 export default {
   name: "App",
   components: {
-    Container : Container,
+    Container: Container,
+  },
+  data() {
+    return {
+      posts: posts,
+      numClicked: 0,
+    };
+  },
+  methods: {
+    more() {
+      axios
+        .get(`https://codingapple1.github.io/vue/more${this.numClicked}.json`)
+        .then((result) => {
+          // Get요청 성공 시 실행할 코드
+          // console.log(result)  // result(object) 의 data 속성에 데이터 서버에서 내보내주는 data있음
+          this.posts.push(result.data);
+          this.numClicked++;
+        })
+        .catch(() => {
+          // 실패시 실행할 코드
+        });
+      /* 
+      axios
+        .post("서버URL", "보낼데이터")
+        .then((result) => {
+          result.data;
+          //POST요청 성공시 실행할 코드~~
+        })
+        .catch(() => {
+          //실패시 실행할 코드
+        });
+        */
+    },
   },
 };
 </script>
@@ -39,7 +73,13 @@ body {
 ul {
   padding: 5px;
   list-style-type: none;
-  border: solid;
+}
+.more {
+  text-align: center;
+}
+.more-button {
+  cursor: pointer;
+  color: skyblue;
 }
 .logo {
   width: 22px;
