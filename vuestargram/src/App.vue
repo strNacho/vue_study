@@ -1,21 +1,29 @@
 <template>
   <div class="header">
     <ul class="header-button-left">
-      <li>Cancel</li>
+      <li @click="step--">Cancel</li>
     </ul>
     <ul class="header-button-right">
-      <li>Next</li>
+      <li v-if="step == 1" @click="step = 2">Next</li>
+      <li v-if="step == 2" @click="publish">Push</li>
     </ul>
     <img src="./assets/logo.png" class="logo" />
   </div>
 
-  <Container :posts="posts" :step="step"/>
+  <Container :posts="posts" :step="step" :imageURL="imageURL" @writeString="newString = $event; console.log($event)"/>
   <div class="more">
     <a class="more-button" @click="more">more</a>
   </div>
   <div class="footer">
     <ul class="footer-button-plus">
-      <input type="file" id="file" class="inputfile" />
+      <!-- 파일 선택시 확장자 필터링(조회할때만 선택은 가능)하는 속성 : accept="image/*" 혹은 accept="image/png" -->
+      <input
+        @change="upload"
+        multiple
+        type="file"
+        id="file"
+        class="inputfile"
+      />
       <label for="file" class="input-plus">+</label>
     </ul>
   </div>
@@ -35,10 +43,32 @@ export default {
     return {
       posts: posts,
       numClicked: 0,
-      step : 1,
+      step: 0,
+      imageURL: "",
+      newString : "write!",
     };
   },
   methods: {
+    publish() {
+      this.posts.unshift({
+        name: "Kim Hyun",
+        userImage: "https://picsum.photos/100?random=3",
+        postImage: this.imageURL,
+        likes: 36,
+        date: "May 15",
+        liked: false,
+        content: this.newString,
+        filter: "perpetua",
+      });
+      this.step = 0;
+    },
+    upload(e) {
+      let imageFile = e.target.files;
+      console.log(imageFile[0].name);
+      this.imageURL = URL.createObjectURL(imageFile[0]);
+      console.log(this.imageURL);
+      this.step = 1;
+    },
     more() {
       axios
         .get(`https://codingapple1.github.io/vue/more${this.numClicked}.json`)

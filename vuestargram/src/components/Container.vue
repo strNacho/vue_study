@@ -6,37 +6,62 @@
 
   <!-- 필터선택페이지 -->
   <div v-if="step == 1">
-    <div class="upload-image"></div>
+    <div class="upload-image" :style="`background-image:url(${imageURL})`"></div>
     <div class="filters">
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
+      <FilterBox v-for="filter in filters" :key="filter" :imageURL="imageURL" :filter="filter">
+        <!-- slot문법 -->
+        <template v-slot>{{filter}}</template>
+        <!-- 추가 사용법 -->
+        <!-- v-slot:a 라고 지정 시 자식 컴포넌트 slot태그 속성 name과 바인딩 -->
+        <!-- 자식이 부모에게 전달 시 -->
+        <!-- [child] slot 태그에서 v-bind로 데이터 전달(:data="data")-->
+        <!-- [Parent] template 태그에서 v-slot:default="작명, 태그 내 {{ 작명.data }}로 바인딩"-->
+      </FilterBox>
     </div>
+    <!-- <div class="filter-1"></div>
+    <div class="filter-1"></div>
+    <div class="filter-1"></div>
+    <div class="filter-1"></div>
+    <div class="filter-1"></div> -->
   </div>
-  
+
   <!-- 글작성페이지 -->
   <div v-if="step == 2">
-    <div class="upload-image"></div>
+    <div class="upload-image" :style="bgImage"></div>
     <div class="write">
-      <textarea class="write-box">write!</textarea>
+      <textarea class="write-box" @input="writeString">write!</textarea>
     </div>
   </div>
 </template>
 
 <script>
 import Post from "./Post.vue";
+import FilterBox from "./FilterBox.vue";
 
 export default {
   name: "Container",
+  data(){
+    return{
+      filters: [ "aden", "_1977", "brannan", "brooklyn", "clarendon", "earlybird", "gingham", "hudson", 
+      "inkwell", "kelvin", "lark", "lofi", "maven", "mayfair", "moon", "nashville", "perpetua", 
+      "reyes", "rise", "slumber", "stinson", "toaster", "valencia", "walden", "willow", "xpro2"],
+    }
+  },
   props: {
     posts: Array,
     step: Number,
+    imageURL: String,
+    newString: String,
   },
   components: {
     Post: Post,
+    FilterBox: FilterBox,
   },
+  methods : {
+    writeString(e){
+      this.$emit('writeString', e.target.value)
+    }
+  }
 };
 </script>
 
@@ -44,7 +69,7 @@ export default {
 .upload-image {
   width: 100%;
   height: 450px;
-  background: cornflowerblue;
+  background: white;
   background-size: cover;
 }
 .filters {
