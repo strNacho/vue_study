@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <ul class="header-button-left">
-      <li @click="step--">Cancel</li>
+      <li @click="step !== 0 && step--">Cancel</li>
     </ul>
     <ul class="header-button-right">
       <li v-if="step == 1" @click="step = 2">Next</li>
@@ -9,8 +9,33 @@
     </ul>
     <img src="./assets/logo.png" class="logo" />
   </div>
+  <!-- vuex로 상태관리 -->
+  <div>{{ $store.state.more }}</div>
+  <div class="more">
+    <!-- vuex actions에 등록된 함수 사용 -->
+    <!-- <a class="more-button" @click="$store.dispatch('getData')">more</a> -->
+    <a class="more-button" @click="getData">more</a>
+  </div>
 
-  <Container :posts="posts" :step="step" :imageURL="imageURL" @writeString="newString = $event; console.log($event)"/>
+  <!-- computed에 등록된 데이터 사용 (로드시 1회만 불러옴)-->
+  <!-- <div>{{ $store.state.name }}</div> -->
+  <div>{{ name }}</div> 
+  <div class="more">
+    <!-- vuex mutaions에 등록된 함수 사용 -->
+    <!-- <a class="more-button" @click="$store.commit('changeName', '쵸쵸')">change</a> -->
+    <a class="more-button" @click="changeName('쵸쵸')">change</a>
+  </div>
+
+  <Container
+    :posts="posts"
+    :step="step"
+    :imageURL="imageURL"
+    :filterApplied="filterApplied"
+    @writeString="
+      newString = $event;
+      console.log($event);
+    "
+  />
   <div class="more">
     <a class="more-button" @click="more">more</a>
   </div>
@@ -23,6 +48,7 @@
         type="file"
         id="file"
         class="inputfile"
+        ref="fileInput"
       />
       <label for="file" class="input-plus">+</label>
     </ul>
@@ -32,7 +58,7 @@
 <script>
 import Container from "./components/Container.vue";
 import posts from "./assets/posts.js";
-import axios from "axios";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "App",
@@ -45,10 +71,22 @@ export default {
       numClicked: 0,
       step: 0,
       imageURL: "",
-      newString : "write!",
+      newString: "write!",
+      filterApplied: "",
     };
   },
+  computed: {
+    // name() {
+    //   return this.$store.state.name;
+    // },
+    // likes() {
+    //   return this.$store.state.likes;
+    // },
+    ...mapState(['name', 'likes']),
+  },
   methods: {
+    ...mapMutations(['changeName']), // 동기적 - UI 등 상태변경
+    ...mapActions(['getData']),// 비동기적 - 서버나 외부 API로부터 데이터 받아올 때
     publish() {
       this.posts.unshift({
         name: "Kim Hyun",
@@ -58,7 +96,7 @@ export default {
         date: "May 15",
         liked: false,
         content: this.newString,
-        filter: "perpetua",
+        filter: this.filterApplied,
       });
       this.step = 0;
     },
@@ -68,9 +106,10 @@ export default {
       this.imageURL = URL.createObjectURL(imageFile[0]);
       console.log(this.imageURL);
       this.step = 1;
+      this.$refs.fileInput.value = ""; // 파일 선택을 초기화
     },
     more() {
-      axios
+      this.axios
         .get(`https://codingapple1.github.io/vue/more${this.numClicked}.json`)
         .then((result) => {
           // Get요청 성공 시 실행할 코드
@@ -93,6 +132,12 @@ export default {
         });
         */
     },
+  },
+  mounted() {
+    this.emitter.on("applyFilter", (e) => {
+      console.log(e);
+      this.filterApplied = e;
+    });
   },
 };
 </script>

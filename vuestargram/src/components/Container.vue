@@ -1,12 +1,12 @@
 <template>
   <!-- 포스트 -->
   <div v-if="step == 0">
-    <Post v-for="(posting, i) in posts" :key="i" :posting="posting" />
+    <Post v-for="(posting, i) in posts" :key="i" :index="i" :posting="posting" />
   </div>
 
   <!-- 필터선택페이지 -->
   <div v-if="step == 1">
-    <div class="upload-image" :style="`background-image:url(${imageURL})`"></div>
+    <div :class="`${filterApplied} upload-image`" :style="`background-image:url(${imageURL})`"></div>
     <div class="filters">
       <FilterBox v-for="filter in filters" :key="filter" :imageURL="imageURL" :filter="filter">
         <!-- slot문법 -->
@@ -27,7 +27,7 @@
 
   <!-- 글작성페이지 -->
   <div v-if="step == 2">
-    <div class="upload-image" :style="bgImage"></div>
+    <div :class="`${filterApplied} upload-image`" :style="`background-image:url(${imageURL})`"></div>
     <div class="write">
       <textarea class="write-box" @input="writeString">write!</textarea>
     </div>
@@ -47,11 +47,13 @@ export default {
       "reyes", "rise", "slumber", "stinson", "toaster", "valencia", "walden", "willow", "xpro2"],
     }
   },
+  emits:["writeString"],
   props: {
     posts: Array,
     step: Number,
     imageURL: String,
     newString: String,
+    filterApplied: String,
   },
   components: {
     Post: Post,

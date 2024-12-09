@@ -4,9 +4,11 @@
       <div class="profile" :style="{ backgroundImage : `url(${posting.userImage})` }"></div>
       <span class="profile-name">{{ posting.name }}</span>
     </div>
-    <div class="post-body" :style="{ backgroundImage : `url(${posting.postImage})` }"></div>
+    <div @click="likeToggle" :class="`${posting.filter} post-body`" :style="{ backgroundImage : `url(${posting.postImage})` }"></div>
     <div class="post-content">
-      <p>{{ posting.likes }} Likes</p>
+      <!-- <p>{{ posting.likes }} Likes</p> -->
+      <p>{{ $store.state.likes[index] }} Likes</p>
+
       <p><strong>{{ posting.name }}</strong> {{ posting.content }}</p>
       <p class="date">{{ posting.date }}</p>
     </div>
@@ -17,7 +19,15 @@
 export default {
   name: "Post",
   props: {
-    posting : Object
+    posting : Object,
+    index: Number,
+  },
+  methods:{
+    likeToggle(){
+      console.log(this.$store.state.liked);
+      // vuex mutations에 선언한 함수 사용
+      this.$store.commit('toggle', this.index);
+    }
   },
 };
 </script>
