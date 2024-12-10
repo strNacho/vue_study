@@ -32,11 +32,16 @@
       <textarea class="write-box" @input="writeString">write!</textarea>
     </div>
   </div>
+
+  <div v-if="step == 3">
+    <MyPage :propsTest="1"/>
+  </div>
 </template>
 
 <script>
 import Post from "./Post.vue";
 import FilterBox from "./FilterBox.vue";
+import MyPage from "./MyPage.vue";
 
 export default {
   name: "Container",
@@ -56,8 +61,9 @@ export default {
     filterApplied: String,
   },
   components: {
-    Post: Post,
-    FilterBox: FilterBox,
+    Post : Post,
+    FilterBox : FilterBox,
+    MyPage : MyPage,
   },
   methods : {
     writeString(e){

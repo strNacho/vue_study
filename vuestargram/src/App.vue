@@ -69,7 +69,7 @@ export default {
     return {
       posts: posts,
       numClicked: 0,
-      step: 0,
+      step: 3,
       imageURL: "",
       newString: "write!",
       filterApplied: "",
@@ -98,7 +98,7 @@ export default {
         content: this.newString,
         filter: this.filterApplied,
       });
-      this.step = 0;
+      this.step = 2;
     },
     upload(e) {
       let imageFile = e.target.files;
